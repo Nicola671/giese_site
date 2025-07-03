@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Bolsa de Trabajo</h1>
+{% for oferta in ofertas %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ oferta.puesto }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ oferta.empresa }}</h6>
+      <p class="card-text">{{ oferta.descripcion }}</p>
+      <p class="card-text">Contacto: {{ oferta.contacto }}</p>
+      {% if oferta.archivo %}
+      <a href="{{ oferta.archivo.url }}" class="btn btn-primary" download>Descargar archivo</a>
+      {% endif %}
+      <p class="card-text"><small class="text-muted">{{ oferta.fecha }}</small></p>
+    </div>
+  </div>
+{% endfor %}
+{% endblock %}

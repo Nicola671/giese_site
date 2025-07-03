@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="mb-4 text-center animate__animated animate__fadeInDown">Publicaciones</h1>
+<div class="row justify-content-center">
+  {% for pub in publicaciones %}
+  <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+    <div class="card shadow rounded-4 w-100 animate__animated animate__fadeInUp">
+      {% if pub.imagenes.all or pub.imagen or pub.video %}
+      <div id="carouselPub{{ pub.id }}" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          {% for img in pub.imagenes.all %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ img.imagen.url }}" class="d-block w-100" style="object-fit:cover; max-height:320px;" alt="Imagen publicación">
+          </div>
+          {% endfor %}
+          {% if pub.imagen %}
+          <div class="carousel-item {% if not pub.imagenes.all and not pub.video %}active{% endif %}">
+            <img src="{{ pub.imagen.url }}" class="d-block w-100" style="object-fit:cover; max-height:320px;" alt="Imagen publicación">
+          </div>
+          {% endif %}
+          {% if pub.video %}
+          <div class="carousel-item {% if not pub.imagenes.all and not pub.imagen %}active{% endif %}">
+            <video class="d-block w-100" style="max-height:320px;" controls>
+              <source src="{{ pub.video.url }}" type="video/mp4">
+              <source src="{{ pub.video.url }}" type="video/webm">
+              Tu navegador no soporta video.
+            </video>
+          </div>
+          {% endif %}
+        </div>
+        {% if pub.imagenes.all|length > 1 or pub.imagen or pub.video %}
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselPub{{ pub.id }}" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselPub{{ pub.id }}" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Siguiente</span>
+        </button>
+        {% endif %}
+      </div>
+      {% endif %}
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ pub.titulo }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ pub.autores }}</h6>
+        <p class="card-text">{{ pub.resumen }}</p>
+        {% if pub.archivo %}
+        <a href="{{ pub.archivo.url }}" class="btn btn-success mt-auto" download>Descargar publicación</a>
+        {% endif %}
+        <p class="card-text mt-2"><small class="text-muted">{{ pub.fecha }}</small></p>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center"><p>No hay publicaciones registradas.</p></div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-7">
+    <div class="card shadow rounded-4 mt-5 animate__animated animate__fadeInUp">
+      <div class="card-body">
+        <h2 class="mb-4 text-center">{{ accion }} investigación</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          <div class="mb-3">
+            {{ form.titulo.label_tag }}
+            {{ form.titulo }}
+            {{ form.titulo.errors }}
+          </div>
+          <div class="mb-3">
+            {{ form.descripcion.label_tag }}
+            {{ form.descripcion }}
+            {{ form.descripcion.errors }}
+          </div>
+          <div class="mb-3">
+            {{ form.foto.label_tag }}
+            {{ form.foto }}
+            {% if form.instance.foto %}
+              <div class="mt-2">
+                <img src="{{ form.instance.foto.url }}" alt="Foto actual" style="max-width:180px; max-height:120px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.12);">
+              </div>
+            {% endif %}
+            {{ form.foto.errors }}
+          </div>
+          <div class="mb-3">
+            {{ form.archivo.label_tag }}
+            {{ form.archivo }}
+            {{ form.archivo.errors }}
+          </div>
+          <button type="submit" class="btn btn-success w-100">{{ accion }}</button>
+          <a href="{% url 'panel_investigacion' %}" class="btn btn-outline-secondary w-100 mt-2">Cancelar</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

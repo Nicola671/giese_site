@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="mb-4 text-center animate__animated animate__fadeInDown" data-aos="fade-down">Noticias</h1>
+<div class="row g-4 justify-content-center">
+  {% for noticia in noticias %}
+    <div class="col-12 col-md-8 col-lg-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+      <div class="card border-0 shadow-pop rounded-4 mb-4 animate__animated animate__fadeInUp bg-white" style="overflow:hidden;">
+        {% if noticia.imagen %}
+        <div style="height:260px; overflow:hidden;">
+          <img src="{{ noticia.imagen.url }}" class="w-100" alt="{{ noticia.titulo }}" style="object-fit:cover; min-height:180px;">
+        </div>
+        {% endif %}
+        <div class="card-body p-4">
+          <h3 class="card-title mb-2 text-success">{{ noticia.titulo }}</h3>
+          <p class="card-text mb-3" style="font-size:1.1rem; line-height:1.7;">{{ noticia.contenido|linebreaksbr }}</p>
+          <p class="card-text text-end"><small class="text-muted">{{ noticia.fecha }}</small></p>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12 text-center">
+      <div class="alert alert-info">Aún no hay noticias cargadas.</div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-pop animate__animated animate__fadeInUp" data-aos="fade-up">
+      <div class="card-body">
+        <h2 class="card-title mb-3"><i class="bi bi-calendar-event me-2"></i>{{ evento.nombre }}</h2>
+        <p class="text-muted mb-2"><i class="bi bi-calendar"></i> {{ evento.fecha }}{% if evento.fecha_cierre %} - {{ evento.fecha_cierre }}{% endif %}</p>
+        <p class="mb-4">{{ evento.descripcion }}</p>
+        {% if evento.pdf %}
+        <a href="{{ evento.pdf.url }}" class="btn btn-primary hvr-bounce-in mb-2" target="_blank"><i class="bi bi-file-earmark-pdf"></i> Descargar PDF</a>
+        {% endif %}
+        {% if evento.archivo %}
+        <a href="{{ evento.archivo.url }}" class="btn btn-secondary hvr-bounce-in mb-2 ms-2" target="_blank"><i class="bi bi-download"></i> Descargar archivo</a>
+        {% endif %}
+        <div class="mt-4">
+          <a href="{% url 'eventos' %}" class="btn btn-outline-success hvr-buzz-out"><i class="bi bi-arrow-left"></i> Volver a eventos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow rounded-4 animate__animated animate__fadeInUp">
+      <div class="card-body">
+        <h3 class="mb-4">{% if evento %}Editar evento{% else %}Agregar evento{% endif %}</h3>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          <div class="mb-3">
+            <label for="id_nombre" class="form-label">Nombre del evento</label>
+            {{ form.nombre }}
+            {{ form.nombre.errors }}
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="id_fecha" class="form-label">Fecha de inicio</label>
+              {{ form.fecha }}
+              {{ form.fecha.errors }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="id_fecha_cierre" class="form-label">Fecha de cierre</label>
+              {{ form.fecha_cierre }}
+              {{ form.fecha_cierre.errors }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="id_descripcion" class="form-label">Descripción</label>
+            {{ form.descripcion }}
+            {{ form.descripcion.errors }}
+          </div>
+          <div class="mb-3">
+            <label for="id_pdf" class="form-label">Archivo PDF</label>
+            {{ form.pdf }}
+            {{ form.pdf.errors }}
+          </div>
+          <div class="mb-3">
+            <label for="id_archivo" class="form-label">Archivo adicional</label>
+            {{ form.archivo }}
+            {{ form.archivo.errors }}
+          </div>
+          <button type="submit" class="btn btn-success hvr-bounce-in"><i class="bi bi-check-circle"></i> Guardar</button>
+          <a href="{% url 'panel_eventos' %}" class="btn btn-secondary ms-2 hvr-buzz-out">Cancelar</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="mb-4 text-center animate__animated animate__fadeInDown" data-aos="fade-down">Investigación</h1>
+<div class="row g-4 justify-content-center">
+  {% for inv in investigaciones %}
+    <div class="col-12 col-md-8 col-lg-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:1 }}00">
+      <div class="card border-0 shadow-pop rounded-4 mb-4 animate__animated animate__fadeInUp bg-white" style="overflow:hidden;">
+        {% if inv.foto %}
+        <div style="height:260px; overflow:hidden;">
+          <img src="{{ inv.foto.url }}" class="w-100" alt="{{ inv.titulo }}" style="object-fit:cover; min-height:180px;">
+        </div>
+        {% endif %}
+        <div class="card-body p-4">
+          <h3 class="card-title mb-2 text-success">{{ inv.titulo }}</h3>
+          <p class="card-text mb-3" style="font-size:1.1rem; line-height:1.7;">{{ inv.descripcion|linebreaksbr }}</p>
+          {% if inv.archivo %}
+          <a href="{{ inv.archivo.url }}" class="btn btn-outline-primary btn-sm mb-2" download>Descargar archivo</a>
+          {% endif %}
+          <p class="card-text text-end"><small class="text-muted">{{ inv.fecha }}</small></p>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12 text-center">
+      <div class="alert alert-info">Aún no hay investigaciones cargadas.</div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

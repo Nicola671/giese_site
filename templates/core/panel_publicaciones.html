@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  .panel-header {
+    background: linear-gradient(90deg, #e0f7fa 0%, #b2dfdb 100%);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(44,62,80,0.10);
+    padding: 2rem 1rem 1.5rem 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .panel-header::before {
+    content: '';
+    position: absolute;
+    top: -40px; left: -40px;
+    width: 120px; height: 120px;
+    background: rgba(44,62,80,0.07);
+    border-radius: 50%;
+    z-index: 0;
+  }
+  .panel-header h2 {
+    position: relative;
+    z-index: 1;
+    font-weight: 700;
+    color: #14532d;
+    letter-spacing: 1px;
+  }
+  .table thead th {
+    background: #e0f7fa;
+    color: #14532d;
+    border: none;
+  }
+  .table tbody tr {
+    background: rgba(255,255,255,0.95);
+    transition: box-shadow 0.2s;
+  }
+  .table tbody tr:hover {
+    box-shadow: 0 2px 12px rgba(44,62,80,0.10);
+  }
+</style>
+<div class="row justify-content-center">
+  <div class="col-md-10">
+    <div class="panel-header animate__animated animate__fadeInDown">
+      <h2 class="mb-0"><i class="bi bi-journal-text me-2"></i>Panel de Publicaciones</h2>
+      <a href="{% url 'publicacion_add' %}" class="btn btn-success position-absolute end-0 top-0 mt-3 me-3">Agregar publicación</a>
+    </div>
+    <div class="card shadow rounded-4 animate__animated animate__fadeInUp">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Autores</th>
+                <th>Archivo</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for pub in publicaciones %}
+              <tr>
+                <td>{{ pub.titulo }}</td>
+                <td>{{ pub.autores }}</td>
+                <td>{% if pub.archivo %}<a href="{{ pub.archivo.url }}" target="_blank">Ver/Descargar</a>{% else %}-{% endif %}</td>
+                <td>{{ pub.fecha }}</td>
+                <td>
+                  <a href="{% url 'publicacion_edit' pub.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                  <a href="{% url 'publicacion_delete' pub.pk %}" class="btn btn-sm btn-outline-danger ms-1">Eliminar</a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="5" class="text-center">No hay publicaciones registradas.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
