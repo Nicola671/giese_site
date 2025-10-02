@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Publicaciones Científicas | GIESE{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/publicaciones.css' %}">
+<style>
+  :root {
+    --primary-color: #2c5530; /* Mantenemos las variables aquí para que puedan ser usadas por otros estilos en la página si es necesario */
+    --secondary-color: #4a7c59;
+    --accent-color: #6ab7ff;
+    --light-bg: #f8fffe;
+    --shadow-light: 0 4px 20px rgba(44, 85, 48, 0.1);
+    --shadow-medium: 0 8px 30px rgba(44, 85, 48, 0.15);
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Polished card and smaller image */
+  .publication-card {
+    border: 1px solid rgba(44,85,48,0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    transition: transform .2s ease, box-shadow .2s ease;
+    background: #fff;
+  }
+  .publication-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-medium);
+  }
+  .publication-image {
+    height: 96px; /* mucho más chica */
+    overflow: hidden;
+    background: #f3f6f4;
+    display: flex; align-items: center; justify-content: center; /* centrar contenido */
+    padding: .5rem;
+  }
+  .publication-image img {
+    max-width: 70%; /* menos ancha */
+    max-height: 100%;
+    object-fit: contain; /* no recortar */
+    transition: transform .4s ease;
+  }
+  .publication-card:hover .publication-image img {
+    transform: scale(1.06);
+  }
+  .publication-content {
+    padding: 1rem 1rem 0.75rem;
+  }
+  .publication-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    margin-bottom: .25rem;
+  }
+  .publication-authors {
+    color: #6b7d6f;
+    font-size: .95rem;
+    margin-bottom: .5rem;
+  }
+  .publication-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid rgba(44,85,48,0.08);
+    padding-top: .5rem; margin-top: auto;
+  }
+  .btn-action {
+    border-radius: 999px; padding: .35rem .75rem; font-size: .85rem;
+  }
+  @media (max-width: 768px) {
+    .publication-image { height: 80px; }
+    .publication-image img { max-width: 80%; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="container hero-content">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h1 class="display-4 fw-bold mb-3">Publicaciones Científicas</h1>
+        <p class="lead mb-4">Descubre las últimas investigaciones y trabajos académicos de nuestra institución. Conocimiento que transforma y avanza hacia el futuro.</p>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge bg-light text-dark px-3 py-2">Investigación</span>
+          <span class="badge bg-light text-dark px-3 py-2">Innovación</span>
+          <span class="badge bg-light text-dark px-3 py-2">Ciencia</span>
+        </div>
+      </div>
+      <div class="col-lg-4 text-center">
+        <i class="bi bi-journal-bookmark-fill" style="font-size: 8rem; opacity: 0.3;"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Estadísticas -->
+  {% if publicaciones %}
+  <div class="stats-banner fade-in-up">
+    <div class="stat-item"> {# TODO: Considerar pasar este conteo a la vista de Django para no usar lógica en la plantilla #}
+      <span class="stat-number">{{ publicaciones|length }}</span>
+      <span class="stat-label">Publicaciones</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">{{ publicaciones|length|add:15 }}</span>
+      <span class="stat-label">Investigadores</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">{{ current_year }}</span>
+      <span class="stat-label">Año actual</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Filtros de búsqueda -->
+  <div class="filter-section fade-in-up">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <div class="position-relative">
+          <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+          <input type="text" class="form-control search-box ps-5" placeholder="Buscar por título, autor o tema..." id="searchInput">
+        </div>
+      </div>
+      <div class="col-md-4 mt-3 mt-md-0">
+        <select class="form-select search-box" id="filterYear">
+          <option value="">Todos los años</option>
+          {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid de publicaciones -->
+  {% if publicaciones %}
+    <div class="row" id="publicationsGrid">
+      {% for publicacion in publicaciones %} {# Se elimina la clase fade-in-up de aquí, el JS la añadirá dinámicamente #}
+      <div class="col-lg-4 col-md-6 mb-4 publication-item fade-in-up" 
+           data-title="{{ publicacion.titulo|lower }}" 
+           data-authors="{{ publicacion.autores|lower }}" 
+           data-year="{{ publicacion.fecha|date:'Y' }}">
+        <div class="publication-card h-100 d-flex flex-column">
+          
+          <!-- Imagen -->
+          <div class="publication-image">
+            {% with imgs=publicacion.imagenes.all %}
+              {% if imgs and imgs|length > 0 %}
+                {% for img in imgs|slice:":1" %}
+                  {% if img.imagen %}
+                    <img src="{{ img.imagen.url }}" alt="{{ publicacion.titulo }}" loading="lazy">
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                <div class="placeholder">
+                  <i class="bi bi-file-earmark-text"></i>
+                </div>
+              {% endif %}
+            {% endwith %}
+          </div>
+          
+          <!-- Contenido -->
+          <div class="publication-content flex-grow-1 d-flex flex-column">
+            <h3 class="publication-title">{{ publicacion.titulo }}</h3>
+            
+            <p class="publication-authors">
+              <i class="bi bi-people-fill me-1"></i>
+              {{ publicacion.autores }}
+            </p>
+            
+            {% if publicacion.resumen %}
+            <p class="publication-summary">{{ publicacion.resumen }}</p>
+            {% endif %}
+            
+            <!-- Meta información -->
+            <div class="publication-meta">
+              <div class="publication-date">
+                <i class="bi bi-calendar3"></i>
+                {{ publicacion.fecha|date:"d M Y" }}
+              </div>
+              
+              <div class="publication-actions">
+                {% if publicacion.archivos.all|length %}
+                  <a href="{% url 'core:publicacion_detalle' publicacion.pk %}" class="btn-action btn-primary-custom">
+                    <i class="bi bi-download"></i>
+                    Ver/Descargar
+                  </a>
+                {% endif %}
+                {% if publicacion.videos.all|length %}
+                  <a href="{% url 'core:publicacion_detalle' publicacion.pk %}" class="btn-action btn-outline-custom">
+                    <i class="bi bi-play-circle"></i>
+                    Videos
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      <!-- Mensaje para búsqueda sin resultados (inicialmente oculto) -->
+      <div id="emptySearchMessage" class="empty-state" style="display: none;">
+        <i class="bi bi-search"></i>
+        <h3>No se encontraron resultados</h3>
+        <p>Intenta con otros términos de búsqueda o filtros.</p>
+      </div>
+
+    </div>
+  {% else %}
+    <!-- Estado vacío -->
+    <div class="empty-state fade-in-up">
+      <i class="bi bi-journal-x"></i>
+      <h3>No hay publicaciones disponibles</h3>
+      <p>Pronto estarán disponibles las últimas investigaciones y trabajos académicos.</p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Modal para vista detallada (opcional) -->
+<div class="modal fade" id="publicationModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 bg-light">
+        <h5 class="modal-title fw-bold" id="modalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalContent">
+        <!-- Contenido dinámico -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const filterYear = document.getElementById('filterYear');
+    const publicationItems = document.querySelectorAll('.publication-item');
+    const emptySearchMessage = document.getElementById('emptySearchMessage');
+    
+    // Función de búsqueda y filtrado
+    function filterPublications() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedYear = filterYear.value;
+        
+        let visibleCount = 0;
+        
+        publicationItems.forEach(item => {
+            const title = item.dataset.title;
+            const authors = item.dataset.authors;
+            const year = item.dataset.year;
+            
+            const matchesSearch = title.includes(searchTerm) || authors.includes(searchTerm);
+            const matchesYear = !selectedYear || year === selectedYear;
+            
+            if (matchesSearch && matchesYear) {
+                // Si el elemento estaba oculto, reinicia la animación
+                if (item.style.display === 'none') {
+                    item.classList.remove('fade-in-up');
+                    // Forzar reflow para reiniciar la animación
+                    void item.offsetWidth; 
+                    item.classList.add('fade-in-up');
+                }
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Mostrar/ocultar mensaje de "no hay resultados"
+        emptySearchMessage.style.display = (visibleCount === 0 && publicationItems.length > 0) ? 'block' : 'none';
+    }
+    
+    // Event listeners
+    if (searchInput) {
+        searchInput.addEventListener('input', filterPublications);
+    }
+    
+    if (filterYear) {
+        filterYear.addEventListener('change', filterPublications);
+    }
+    
+    // Animación de scroll reveal para los elementos que aparecen en pantalla
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('fade-in-up');
+                // Dejar de observar el elemento una vez que ha sido animado
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    // Observar elementos para animación
+    document.querySelectorAll('.fade-in-up').forEach(el => {
+        observer.observe(el);
+    });
+    
+    // Efecto de typing en el hero
+    const heroTitle = document.querySelector('.hero-section h1');
+    if (heroTitle) {
+        heroTitle.style.opacity = '0';
+        setTimeout(() => {
+            heroTitle.style.opacity = '1';
+            heroTitle.style.animation = 'fadeInUp 1s ease forwards';
+        }, 300);
+    }
+});
+</script>
+{% endblock %}
