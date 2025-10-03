@@ -1,9 +1,12 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-reemplaza-esto-por-una-clave-segura'
+SECRET_KEY = 'NicoyMati2025!'
 DEBUG = True
 ALLOWED_HOSTS = ['giese-site.onrender.com', 'localhost', '127.0.0.1']
 
@@ -55,9 +58,9 @@ import os
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'giese_db',
-        'USER': 'giese_user',
-        'PASSWORD': 'hola1234',
+        'NAME': 'giese_db',  # Debe existir en MySQL
+        'USER': 'root',
+        'PASSWORD': '47413289',  # Asegúrate que esta sea correcta
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -66,6 +69,7 @@ DATABASES = {
         },
     }
 }
+
 
 
 
