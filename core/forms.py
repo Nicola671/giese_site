@@ -1,7 +1,7 @@
-from django import forms
+﻿from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import ( # Asegúrate de importar EquipoUniversidad
+from .models import ( # AsegÃºrate de importar EquipoUniversidad
     Equipo, Noticia, Investigacion, Publicacion, Evento,
     TemaInteres, Universidad, Nivel, EquipoInteres
 )
@@ -25,13 +25,13 @@ class EquipoForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={
                 'class': 'form-control', 
                 'rows': 4, 
-                'placeholder': 'Información profesional, especialidad, etc.',
+                'placeholder': 'InformaciÃ³n profesional, especialidad, etc.',
                 'id': 'id_descripcion'
             }),
             'nivel_descripcion': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 3,
-                'placeholder': 'Detalles específicos sobre la formación (Ej: Tesis sobre...)',
+                'placeholder': 'Detalles especÃ­ficos sobre la formaciÃ³n (Ej: Tesis sobre...)',
                 'id': 'id_nivel_descripcion'
             }),
             'foto': forms.TextInput(attrs={
@@ -41,7 +41,7 @@ class EquipoForm(forms.ModelForm):
             }),
             'dni': forms.TextInput(attrs={
                 'class': 'form-control', 
-                'placeholder': 'Sólo números (7–9 dígitos)',
+                'placeholder': 'SÃ³lo nÃºmeros (7â€“9 dÃ­gitos)',
                 'pattern': r'\d{7,9}',
                 'id': 'id_dni'
             }),
@@ -80,10 +80,10 @@ class EquipoForm(forms.ModelForm):
     nuevo_tema_interes = forms.CharField(
         required=False,
         max_length=150,
-        label="Agregar tema de interés",
+        label="Agregar tema de interÃ©s",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ej: Investigación educativa',
+            'placeholder': 'Ej: InvestigaciÃ³n educativa',
             'id': 'id_nuevo_tema_interes'
         })
     )
@@ -102,10 +102,10 @@ class EquipoForm(forms.ModelForm):
     # Campo libre para el nivel (texto), se mapea a modelo Nivel en save()
     nivel_text = forms.CharField(
         required=False,
-        label="Nivel de formación más alto",
+        label="Nivel de formaciÃ³n mÃ¡s alto",
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ej: Licenciatura, Maestría, Doctorado, Tecnicatura...',
+            'placeholder': 'Ej: Licenciatura, MaestrÃ­a, Doctorado, Tecnicatura...',
             'id': 'id_nivel'
         })
     )
@@ -125,7 +125,7 @@ class EquipoForm(forms.ModelForm):
             nivel_obj, _ = Nivel.objects.get_or_create(descripcion=nivel_valor)
             equipo.nivel = nivel_obj
         else:
-            # Si quedó vacío, permitimos limpiar el FK
+            # Si quedÃ³ vacÃ­o, permitimos limpiar el FK
             equipo.nivel = None
 
         if commit:
@@ -138,8 +138,8 @@ class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
         'autofocus': True, 'class': 'form-control', 'placeholder': 'Usuario'
     }))
-    password = forms.CharField(label="Contraseña", strip=False, widget=forms.PasswordInput(attrs={
-        'class': 'form-control', 'placeholder': 'Contraseña'
+    password = forms.CharField(label="ContraseÃ±a", strip=False, widget=forms.PasswordInput(attrs={
+        'class': 'form-control', 'placeholder': 'ContraseÃ±a'
     }))
 
 
@@ -149,7 +149,7 @@ class NoticiaForm(forms.ModelForm):
         model = Noticia
         fields = ['titulo', 'contenido', 'imagen', 'video', 'fecha']
         widgets = {
-            'titulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Título de la noticia'}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'TÃ­tulo de la noticia'}),
             'contenido': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Contenido de la noticia'}),
             'imagen': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
             'video': forms.FileInput(attrs={'class': 'form-control', 'accept': 'video/*'}),
@@ -157,32 +157,32 @@ class NoticiaForm(forms.ModelForm):
         }
 
 
-# ---------- Investigación ----------
+# ---------- InvestigaciÃ³n ----------
 class InvestigacionForm(forms.ModelForm):
     class Meta:
         model = Investigacion
         fields = ['titulo', 'descripcion', 'imagen_portada', 'video_portada', 'fecha']
         widgets = {
-            'titulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Título de la investigación'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Descripción, resumen, objetivos, etc.'}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'TÃ­tulo de la investigaciÃ³n'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'DescripciÃ³n, resumen, objetivos, etc.'}),
             'imagen_portada': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
             'video_portada': forms.FileInput(attrs={'class': 'form-control', 'accept': 'video/*'}),
             'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
 
-# ---------- Publicación (simplificada, sin M2M) ----------
+# ---------- PublicaciÃ³n (simplificada, sin M2M) ----------
 class PublicacionForm(forms.ModelForm):
     """
-    'autores' es texto libre: podés ingresar 2 o 3 autores separados por coma.
+    'autores' es texto libre: podÃ©s ingresar 2 o 3 autores separados por coma.
     Incluye 'fecha' para que el admin la cargue.
     """
     class Meta:
         model = Publicacion
         fields = ['titulo', 'autores', 'resumen', 'fecha']
         widgets = {
-            'titulo':  forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Título de la publicación'}),
-            'autores': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: A. Pérez, M. López, J. Díaz'}),
+            'titulo':  forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'TÃ­tulo de la publicaciÃ³n'}),
+            'autores': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: A. PÃ©rez, M. LÃ³pez, J. DÃ­az'}),
             'resumen': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Resumen, detalles, etc.'}),
             'fecha':   forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
@@ -197,9 +197,10 @@ class EventoForm(forms.ModelForm):
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del evento'}),
             'fecha': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'fecha_cierre': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Descripción del evento'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'DescripciÃ³n del evento'}),
             'imagen_portada': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
             'color': forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),
             'pdf': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ruta o URL del PDF'}),
             'archivo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ruta o URL del archivo'}),
         }
+

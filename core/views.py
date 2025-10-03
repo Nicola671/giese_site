@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+﻿from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.contrib import messages
@@ -14,7 +14,7 @@ from .forms import EquipoForm, CustomLoginForm, NoticiaForm, InvestigacionForm, 
 
 def inicio(request):
     quienes_somos = (
-        "Somos GIESE, un grupo de investigación y extensión de la "
+        "Somos GIESE, un grupo de investigaciÃ³n y extensiÃ³n de la "
         "Universidad Nacional de Mar del Plata."
     )
     return render(request, "core/inicio.html", {"quienes_somos": quienes_somos})
@@ -95,7 +95,7 @@ def contacto(request):
         mensaje = (request.POST.get("mensaje") or "").strip()
 
         if not (nombre and email and mensaje):
-            messages.error(request, "Completá todos los campos.")
+            messages.error(request, "CompletÃ¡ todos los campos.")
             return render(request, "core/contacto.html", {"form_data": request.POST})
 
         from django.core.mail import send_mail
@@ -111,7 +111,7 @@ def contacto(request):
         sender = getattr(settings, "DEFAULT_FROM_EMAIL", email or "no-reply@example.com")
         try:
             send_mail(subject, body, sender, recipient, fail_silently=False)
-            messages.success(request, "Tu mensaje fue enviado. ¡Gracias por contactarnos!")
+            messages.success(request, "Tu mensaje fue enviado. Â¡Gracias por contactarnos!")
             return redirect("core:contacto")
         except Exception as e:
             messages.error(request, f"No se pudo enviar el mensaje: {e}")
@@ -120,7 +120,7 @@ def contacto(request):
     return render(request, "core/contacto.html")
 
 
-# ------------------ Autenticación ------------------
+# ------------------ AutenticaciÃ³n ------------------
 
 def _redirect_after_login(request, fallback="core:panel_equipo"):
     """
@@ -165,14 +165,14 @@ def panel_equipo(request):
 
 @login_required
 def equipo_add(request):
-    # Si el método es POST, procesamos el formulario. Si es GET, creamos uno vacío.
+    # Si el mÃ©todo es POST, procesamos el formulario. Si es GET, creamos uno vacÃ­o.
     if request.method == "POST":
         form = EquipoForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 obj = form.save()
 
-                # --- Lógica para guardar campos dinámicos ---
+                # --- LÃ³gica para guardar campos dinÃ¡micos ---
 
                 # 1. Guardar Profesionalidades (Roles)
                 titulos = request.POST.getlist('profesionalidad_titulo')
@@ -195,7 +195,7 @@ def equipo_add(request):
                 EquipoUniversidad.objects.filter(equipo=obj).delete() # Limpiar universidades antiguas
                 for i, nombre_uni in enumerate(universidad_nombres):
                     if nombre_uni:
-                        # Busca o crea la universidad y obtén el objeto
+                        # Busca o crea la universidad y obtÃ©n el objeto
                         universidad_obj, created = Universidad.objects.get_or_create(
                             descripcion_universidad=nombre_uni.strip()
                         )
@@ -206,14 +206,14 @@ def equipo_add(request):
                             orden=i + 1
                         )
 
-                # 3. Guardar Temas de Interés
+                # 3. Guardar Temas de InterÃ©s
                 interes_nombres = request.POST.getlist('interes_nombre')
                 descripciones_interes = request.POST.getlist('interes_descripcion')
 
                 EquipoInteres.objects.filter(equipo=obj).delete() # Limpiar intereses antiguos
                 for i, nombre_interes in enumerate(interes_nombres):
                     if nombre_interes:
-                        # Busca o crea el tema de interés y obtén el objeto
+                        # Busca o crea el tema de interÃ©s y obtÃ©n el objeto
                         interes_obj, created = TemaInteres.objects.get_or_create(
                             descripcion_interes=nombre_interes.strip()
                         )
@@ -240,7 +240,7 @@ def equipo_add(request):
                     media_dir = os.path.join(settings.MEDIA_ROOT, 'equipo_fotos')
                     os.makedirs(media_dir, exist_ok=True)
                     
-                    # Generar nombre único
+                    # Generar nombre Ãºnico
                     ext = foto_archivo.name.split('.')[-1]
                     filename = f"{obj.pk}_{obj.nombre.replace(' ', '_')}_{uuid.uuid4().hex[:8]}.{ext}"
                     file_path = os.path.join(media_dir, filename)
@@ -255,26 +255,26 @@ def equipo_add(request):
                     obj.foto = relative_url
                     obj.save()
                 
-                messages.success(request, f"✅ Integrante {obj.nombre} agregado correctamente al equipo.")
+                messages.success(request, f"âœ… Integrante {obj.nombre} agregado correctamente al equipo.")
                 return redirect("core:panel_equipo")
                 
             except Exception as e:
-                messages.error(request, f"❌ Error al agregar el integrante: {str(e)}")
-                # Si hay un error al guardar, se mostrará el formulario con los datos y el mensaje.
+                messages.error(request, f"âŒ Error al agregar el integrante: {str(e)}")
+                # Si hay un error al guardar, se mostrarÃ¡ el formulario con los datos y el mensaje.
     else:
-        form = EquipoForm() # Formulario vacío para una nueva entrada
+        form = EquipoForm() # Formulario vacÃ­o para una nueva entrada
         
     # Preparamos dynamic_data para prellenar el formulario (ADD)
     dynamic_data = {}
     if request.method == "POST" and not form.is_valid():
-        # Volvemos a mostrar lo que el usuario envió
+        # Volvemos a mostrar lo que el usuario enviÃ³
         dynamic_data = {
             'profesionalidades': list(zip(request.POST.getlist('profesionalidad_titulo'), request.POST.getlist('profesionalidad_descripcion'))),
             'universidades': list(zip(request.POST.getlist('universidad_nombre'), request.POST.getlist('universidad_descripcion'))),
             'intereses': list(zip(request.POST.getlist('interes_nombre'), request.POST.getlist('interes_descripcion'))),
         }
     elif request.method == "GET":
-        # Una fila vacía por sección para el alta
+        # Una fila vacÃ­a por secciÃ³n para el alta
         dynamic_data = {
             'profesionalidades': [("", "")],
             'universidades': [("", "")],
@@ -294,11 +294,11 @@ def equipo_edit(request, pk):
     persona = get_object_or_404(Equipo, pk=pk)
     if request.method == "POST":
         form = EquipoForm(request.POST, request.FILES, instance=persona)
-        if form.is_valid(): # Si el formulario es válido, se guarda
+        if form.is_valid(): # Si el formulario es vÃ¡lido, se guarda
             try:
                 obj = form.save()
 
-                # --- Lógica para guardar campos dinámicos ---
+                # --- LÃ³gica para guardar campos dinÃ¡micos ---
 
                 # 1. Guardar Profesionalidades (Roles)
                 titulos = request.POST.getlist('profesionalidad_titulo')
@@ -331,7 +331,7 @@ def equipo_edit(request, pk):
                             orden=i + 1
                         )
 
-                # 3. Guardar Temas de Interés
+                # 3. Guardar Temas de InterÃ©s
                 interes_nombres = request.POST.getlist('interes_nombre')
                 descripciones_interes = request.POST.getlist('interes_descripcion')
 
@@ -363,7 +363,7 @@ def equipo_edit(request, pk):
                     media_dir = os.path.join(settings.MEDIA_ROOT, 'equipo_fotos')
                     os.makedirs(media_dir, exist_ok=True)
                     
-                    # Generar nombre único
+                    # Generar nombre Ãºnico
                     ext = foto_archivo.name.split('.')[-1]
                     filename = f"{obj.pk}_{obj.nombre.replace(' ', '_')}_{uuid.uuid4().hex[:8]}.{ext}"
                     file_path = os.path.join(media_dir, filename)
@@ -378,12 +378,12 @@ def equipo_edit(request, pk):
                     obj.foto = relative_url
                     obj.save()
                 
-                messages.success(request, f"✅ Información de {obj.nombre} actualizada correctamente.")
+                messages.success(request, f"âœ… InformaciÃ³n de {obj.nombre} actualizada correctamente.")
                 return redirect("core:panel_equipo")
                 
             except Exception as e:
-                messages.error(request, f"❌ Error al actualizar: {str(e)}")
-    else: # Si el método es GET, se crea el formulario con los datos de la persona
+                messages.error(request, f"âŒ Error al actualizar: {str(e)}")
+    else: # Si el mÃ©todo es GET, se crea el formulario con los datos de la persona
         form = EquipoForm(instance=persona)
 
     # Preparamos dynamic_data para prellenar el formulario (EDIT)
@@ -449,9 +449,9 @@ def noticia_add(request):
                     obj.user = request.user
                 obj.save()
                 
-                # Guardar imágenes adicionales (archivos subidos)
+                # Guardar imÃ¡genes adicionales (archivos subidos)
                 imagenes_files = request.FILES.getlist('imagenes_adicionales')
-                NoticiaImagen.objects.filter(noticia=obj).delete()  # Limpiar imágenes antiguas
+                NoticiaImagen.objects.filter(noticia=obj).delete()  # Limpiar imÃ¡genes antiguas
                 for i, img_file in enumerate(imagenes_files):
                     if img_file:
                         NoticiaImagen.objects.create(
@@ -460,10 +460,10 @@ def noticia_add(request):
                             orden=i + 1
                         )
                 
-                messages.success(request, "✅ Noticia agregada correctamente.")
+                messages.success(request, "âœ… Noticia agregada correctamente.")
                 return redirect("core:panel_noticias")
             except Exception as e:
-                messages.error(request, f"❌ Error al agregar la noticia: {str(e)}")
+                messages.error(request, f"âŒ Error al agregar la noticia: {str(e)}")
     else:
         form = NoticiaForm()
     
@@ -485,10 +485,10 @@ def noticia_edit(request, pk):
                     obj.user = request.user
                 obj.save()
                 
-                # Guardar imágenes adicionales (archivos subidos)
+                # Guardar imÃ¡genes adicionales (archivos subidos)
                 imagenes_files = request.FILES.getlist('imagenes_adicionales')
                 if imagenes_files:
-                    # Solo limpiar si se subieron nuevas imágenes
+                    # Solo limpiar si se subieron nuevas imÃ¡genes
                     NoticiaImagen.objects.filter(noticia=obj).delete()
                     for i, img_file in enumerate(imagenes_files):
                         if img_file:
@@ -498,10 +498,10 @@ def noticia_edit(request, pk):
                                 orden=i + 1
                             )
                 
-                messages.success(request, "✅ Noticia actualizada correctamente.")
+                messages.success(request, "âœ… Noticia actualizada correctamente.")
                 return redirect("core:panel_noticias")
             except Exception as e:
-                messages.error(request, f"❌ Error al actualizar la noticia: {str(e)}")
+                messages.error(request, f"âŒ Error al actualizar la noticia: {str(e)}")
     else:
         form = NoticiaForm(instance=noticia)
     
@@ -522,7 +522,7 @@ def noticia_delete(request, pk):
     return render(request, "core/noticia_confirm_delete.html", {"noticia": noticia})
 
 
-# ------------------ Panel / CRUD: Investigación ------------------
+# ------------------ Panel / CRUD: InvestigaciÃ³n ------------------
 
 @login_required
 def panel_investigacion(request):
@@ -577,10 +577,10 @@ def investigacion_add(request):
                             orden=i + 1
                         )
                 
-                messages.success(request, "✅ Investigación agregada correctamente.")
+                messages.success(request, "âœ… InvestigaciÃ³n agregada correctamente.")
                 return redirect("core:panel_investigacion")
             except Exception as e:
-                messages.error(request, f"❌ Error al agregar la investigación: {str(e)}")
+                messages.error(request, f"âŒ Error al agregar la investigaciÃ³n: {str(e)}")
     else:
         form = InvestigacionForm()
     
@@ -647,10 +647,10 @@ def investigacion_edit(request, pk):
                             orden=i + 1
                         )
                 
-                messages.success(request, "✅ Investigación actualizada correctamente.")
+                messages.success(request, "âœ… InvestigaciÃ³n actualizada correctamente.")
                 return redirect("core:panel_investigacion")
             except Exception as e:
-                messages.error(request, f"❌ Error al actualizar la investigación: {str(e)}")
+                messages.error(request, f"âŒ Error al actualizar la investigaciÃ³n: {str(e)}")
     else:
         form = InvestigacionForm(instance=investigacion)
     
@@ -670,7 +670,7 @@ def investigacion_delete(request, pk):
     investigacion = get_object_or_404(Investigacion, pk=pk)
     if request.method == "POST":
         investigacion.delete()
-        messages.success(request, "Investigación eliminada correctamente.")
+        messages.success(request, "InvestigaciÃ³n eliminada correctamente.")
         return redirect("core:panel_investigacion")
     return render(request, "core/investigacion_confirm_delete.html", {"investigacion": investigacion})
 
@@ -686,7 +686,7 @@ def panel_publicaciones(request):
 @login_required
 def publicacion_add(request):
     if request.method == "POST":
-        form = PublicacionForm(request.POST)
+        form = PublicacionForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 publicacion = form.save(commit=False)
@@ -694,7 +694,7 @@ def publicacion_add(request):
                     publicacion.user = request.user
                 publicacion.save()
 
-                # Guardar imágenes
+                # Guardar imÃ¡genes
                 imagenes_files = request.FILES.getlist('imagenes')
                 for i, img in enumerate(imagenes_files):
                     if img:
@@ -727,10 +727,10 @@ def publicacion_add(request):
                             orden=i + 1
                         )
 
-                messages.success(request, "✅ Publicación agregada correctamente.")
+                messages.success(request, "âœ… PublicaciÃ³n agregada correctamente.")
                 return redirect("core:panel_publicaciones")
             except Exception as e:
-                messages.error(request, f"❌ Error al agregar la publicación: {str(e)}")
+                messages.error(request, f"âŒ Error al agregar la publicaciÃ³n: {str(e)}")
     else:
         form = PublicacionForm()
     return render(request, "core/publicacion_form.html", {"form": form, "accion": "Agregar"})
@@ -748,7 +748,7 @@ def publicacion_edit(request, pk):
                     pub.user = request.user
                 pub.save()
 
-                # Reemplazar imágenes si subieron nuevas
+                # Reemplazar imÃ¡genes si subieron nuevas
                 imagenes_files = request.FILES.getlist('imagenes')
                 if imagenes_files:
                     PublicacionImagen.objects.filter(publicacion=pub).delete()
@@ -787,10 +787,10 @@ def publicacion_edit(request, pk):
                                 orden=i + 1
                             )
 
-                messages.success(request, "✅ Publicación actualizada correctamente.")
+                messages.success(request, "âœ… PublicaciÃ³n actualizada correctamente.")
                 return redirect("core:panel_publicaciones")
             except Exception as e:
-                messages.error(request, f"❌ Error al actualizar la publicación: {str(e)}")
+                messages.error(request, f"âŒ Error al actualizar la publicaciÃ³n: {str(e)}")
     else:
         form = PublicacionForm(instance=publicacion)
     return render(
@@ -805,7 +805,7 @@ def publicacion_delete(request, pk):
     publicacion = get_object_or_404(Publicacion, pk=pk)
     if request.method == "POST":
         publicacion.delete()
-        messages.success(request, "Publicación eliminada correctamente.")
+        messages.success(request, "PublicaciÃ³n eliminada correctamente.")
         return redirect("core:panel_publicaciones")
     return render(request, "core/publicacion_confirm_delete.html", {"publicacion": publicacion})
 
@@ -830,7 +830,7 @@ def evento_add(request):
                     obj.user = request.user
                 obj.save()
 
-                # Archivos múltiples
+                # Archivos mÃºltiples
                 archivos_files = request.FILES.getlist('archivos')
                 archivos_nombres = request.POST.getlist('archivo_nombre')
                 for i, f in enumerate(archivos_files):
@@ -914,3 +914,4 @@ def evento_detalle(request, pk):
             break
     evento.cover_url = cover
     return render(request, "core/evento_detalle.html", {"evento": evento})
+

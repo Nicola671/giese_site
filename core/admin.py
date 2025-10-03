@@ -1,4 +1,4 @@
-# core/admin.py
+﻿# core/admin.py
 from django.contrib import admin
 from .models import (
     Equipo, EquipoInteres, EquipoUniversidad, Profesionalidad, TemaInteres, Universidad, Nivel,
@@ -8,7 +8,7 @@ from .models import (
     Autor, PublicacionAutor
 )
 
-# ===================== Catálogos =====================
+# ===================== CatÃ¡logos =====================
 
 @admin.register(TemaInteres)
 class TemaInteresAdmin(admin.ModelAdmin):
@@ -73,7 +73,7 @@ class EquipoAdmin(admin.ModelAdmin):
     search_fields = (
         "nombre", "dni",
         "user__username", "user__first_name", "user__last_name", "user__email",
-        "profesionalidades__titulo", # Buscar en los títulos de los roles
+        "profesionalidades__titulo", # Buscar en los tÃ­tulos de los roles
     )
     list_filter = ("nivel",)
     inlines = [ProfesionalidadInline, EquipoUniversidadInline, EquipoInteresInline]
@@ -84,10 +84,10 @@ class EquipoAdmin(admin.ModelAdmin):
         (None, {
             "fields": ("nombre", "dni", "user")
         }),
-        ("Perfil Público", {
+        ("Perfil PÃºblico", {
             "fields": ("descripcion", "foto", "linkedin_url", "email_publico", "color_perfil")
         }),
-        ("Formación Académica", {
+        ("FormaciÃ³n AcadÃ©mica", {
             "fields": ("nivel", "nivel_descripcion")
         }),
     )
@@ -112,7 +112,7 @@ class NoticiaAdmin(admin.ModelAdmin):
     ordering = ("-fecha", "titulo")
 
 
-# ===================== Investigación =====================
+# ===================== InvestigaciÃ³n =====================
 
 class InvestigacionFotoInline(admin.TabularInline):
     model = InvestigacionFoto
@@ -146,7 +146,7 @@ class InvestigacionAdmin(admin.ModelAdmin):
     ordering = ("-fecha", "titulo")
 
 
-# ===================== Publicación =====================
+# ===================== PublicaciÃ³n =====================
 
 class PublicacionImagenInline(admin.TabularInline):
     model = PublicacionImagen
@@ -199,3 +199,4 @@ class AutorAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = ("user",)
     ordering = ("nombre",)
+

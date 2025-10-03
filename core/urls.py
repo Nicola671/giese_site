@@ -1,11 +1,11 @@
-# core/urls.py
+﻿# core/urls.py
 from django.urls import path
 from . import views
 
 app_name = "core"
 
 urlpatterns = [
-    # públicas
+    # pÃºblicas
     path("", views.inicio, name="inicio"),
     path("equipo/", views.equipo, name="equipo"),
     path("equipo/<int:pk>/", views.equipo_detalle, name="equipo_detalle"),
@@ -53,3 +53,4 @@ urlpatterns = [
     path("panel/eventos/<int:pk>/delete/", views.evento_delete, name="evento_delete"),
     path("panel/eventos/<int:pk>/", views.evento_detalle, name="evento_detalle"),
 ]
+

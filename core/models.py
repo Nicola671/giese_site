@@ -1,17 +1,17 @@
-from django.conf import settings
+﻿from django.conf import settings
 from django.db import models
 from django.core.validators import RegexValidator
 
 
-# ----------------- CATÁLOGOS -----------------
+# ----------------- CATÃLOGOS -----------------
 
 class TemaInteres(models.Model):
     descripcion_interes = models.CharField(max_length=150, unique=True)
 
     class Meta:
         db_table = "cuerpo_tema_interes"
-        verbose_name = "Tema de interés"
-        verbose_name_plural = "Temas de interés"
+        verbose_name = "Tema de interÃ©s"
+        verbose_name_plural = "Temas de interÃ©s"
         ordering = ["descripcion_interes"]
 
     def __str__(self):
@@ -44,12 +44,12 @@ class Nivel(models.Model):
         return self.descripcion
 
 
-# ----------------- INVESTIGACIÓN -----------------
+# ----------------- INVESTIGACIÃ“N -----------------
 
 class Investigacion(models.Model):
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField(blank=True)
-    fecha = models.DateField(null=True, blank=True, verbose_name="Fecha de la investigación")
+    fecha = models.DateField(null=True, blank=True, verbose_name="Fecha de la investigaciÃ³n")
     imagen_portada = models.ImageField(upload_to='investigaciones/portadas/', blank=True, null=True, verbose_name="Imagen de portada")
     video_portada = models.FileField(upload_to='investigaciones/videos/', blank=True, null=True, verbose_name="Video de portada", help_text="Archivo de video (MP4, WebM, etc.)")
 
@@ -61,7 +61,7 @@ class Investigacion(models.Model):
         null=True, blank=True,
     )
 
-    # Relación M2M con integrantes del equipo
+    # RelaciÃ³n M2M con integrantes del equipo
     integrantes = models.ManyToManyField(
         'Equipo',
         through='InvestigacionIntegrante',
@@ -72,7 +72,7 @@ class Investigacion(models.Model):
     class Meta:
         ordering = ["-fecha"]
         db_table = "cuerpo_investigacion"
-        verbose_name = "Investigación"
+        verbose_name = "InvestigaciÃ³n"
         verbose_name_plural = "Investigaciones"
 
     def __str__(self):
@@ -127,7 +127,7 @@ class InvestigacionIntegrante(models.Model):
         on_delete=models.CASCADE,
         db_column="integrante_id"
     )
-    rol = models.CharField(max_length=100, blank=True, verbose_name="Rol en la investigación")
+    rol = models.CharField(max_length=100, blank=True, verbose_name="Rol en la investigaciÃ³n")
     orden = models.IntegerField(default=0)
 
     class Meta:
@@ -142,7 +142,7 @@ class InvestigacionIntegrante(models.Model):
 # ----------------- AUTORES / PUBLICACIONES -----------------
 
 class Autor(models.Model):
-    """Autor interno (User) o externo por nombre/afiliación."""
+    """Autor interno (User) o externo por nombre/afiliaciÃ³n."""
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True, blank=True,
@@ -176,7 +176,7 @@ class Publicacion(models.Model):
         null=True, blank=True,
     )
 
-    # Detalle de autores (M2M vía intermedia)
+    # Detalle de autores (M2M vÃ­a intermedia)
     autores_detalle = models.ManyToManyField(
         Autor,
         through='PublicacionAutor',
@@ -209,7 +209,7 @@ class PublicacionAutor(models.Model):
         ordering = ['orden']
 
     def __str__(self):
-        return f"{self.publicacion_id} — {self.autor} ({self.rol or 'autor'})"
+        return f"{self.publicacion_id} â€” {self.autor} ({self.rol or 'autor'})"
 
 
 class PublicacionImagen(models.Model):
@@ -361,7 +361,7 @@ class EventoArchivo(models.Model):
 
 dni_validator = RegexValidator(
     regex=r"^\d{7,9}$",
-    message="DNI debe contener sólo números (7 a 9 dígitos)."
+    message="DNI debe contener sÃ³lo nÃºmeros (7 a 9 dÃ­gitos)."
 )
 
 class Equipo(models.Model):
@@ -373,12 +373,12 @@ class Equipo(models.Model):
     unique=True,
     validators=[dni_validator],
     null=True,          # <--- permitir nulos por ahora
-    blank=True,         # <--- que el form lo permita vacío
-    help_text="Sólo números; 7–9 dígitos."
+    blank=True,         # <--- que el form lo permita vacÃ­o
+    help_text="SÃ³lo nÃºmeros; 7â€“9 dÃ­gitos."
 )
-    nivel_descripcion = models.TextField(blank=True, verbose_name="Descripción del Nivel de Formación")
+    nivel_descripcion = models.TextField(blank=True, verbose_name="DescripciÃ³n del Nivel de FormaciÃ³n")
     linkedin_url = models.URLField(max_length=255, blank=True, verbose_name="URL de LinkedIn")
-    email_publico = models.EmailField(max_length=255, blank=True, verbose_name="Email Público de Contacto")
+    email_publico = models.EmailField(max_length=255, blank=True, verbose_name="Email PÃºblico de Contacto")
     color_perfil = models.CharField(
         max_length=7,
         blank=True,
@@ -437,7 +437,7 @@ class EquipoInteres(models.Model):
         db_column="id_tema_interes",
         related_name="equipo_intereses"
     )
-    descripcion = models.TextField(blank=True, verbose_name="Descripción del Interés")
+    descripcion = models.TextField(blank=True, verbose_name="DescripciÃ³n del InterÃ©s")
     orden = models.PositiveIntegerField(default=1)
 
     class Meta:
@@ -446,7 +446,7 @@ class EquipoInteres(models.Model):
         unique_together = (("equipo", "tema_interes"),)
 
     def __str__(self):
-        return f"{self.equipo} — {self.tema_interes} (orden {self.orden})"
+        return f"{self.equipo} â€” {self.tema_interes} (orden {self.orden})"
 
 
 class EquipoUniversidad(models.Model):
@@ -462,7 +462,7 @@ class EquipoUniversidad(models.Model):
         db_column="id_universidad",
         related_name="equipo_universidades"
     )
-    descripcion = models.TextField(blank=True, verbose_name="Descripción (ej: Título obtenido)")
+    descripcion = models.TextField(blank=True, verbose_name="DescripciÃ³n (ej: TÃ­tulo obtenido)")
     orden = models.PositiveIntegerField(default=1)
 
     class Meta:
@@ -471,7 +471,7 @@ class EquipoUniversidad(models.Model):
         unique_together = (("equipo", "universidad"),)
 
     def __str__(self):
-        return f"{self.equipo} — {self.universidad} (orden {self.orden})"
+        return f"{self.equipo} â€” {self.universidad} (orden {self.orden})"
 
 
 class Profesionalidad(models.Model):
@@ -481,8 +481,8 @@ class Profesionalidad(models.Model):
         db_column="id_equipo",
         related_name="profesionalidades"
     )
-    titulo = models.CharField(max_length=150, verbose_name="Título del Rol o Cargo")
-    descripcion = models.TextField(blank=True, verbose_name="Descripción del Rol")
+    titulo = models.CharField(max_length=150, verbose_name="TÃ­tulo del Rol o Cargo")
+    descripcion = models.TextField(blank=True, verbose_name="DescripciÃ³n del Rol")
     orden = models.PositiveIntegerField(default=1)
 
     class Meta:
@@ -493,3 +493,4 @@ class Profesionalidad(models.Model):
     
     def __str__(self):
         return f"{self.equipo}: {self.titulo}"
+
