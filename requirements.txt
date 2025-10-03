@@ -4,5 +4,8 @@ whitenoise
 dj-database-url
 python-dotenv
 Pillow
-psycopg[binary]      # <-- agrega esto (o psycopg2-binary)
-# mysqlclient        # solo si lo usás en tu PC (podés dejarlo)
+psycopg[binary]      # <-- agrega esto (o psycopg2-binary)      # solo si lo usás en tu PC (podés dejarlo)
+django-cloudinary-storage
+cloudinary
+django-cloudinary-storage>=0.3.0
+cloudinary>=1.41
